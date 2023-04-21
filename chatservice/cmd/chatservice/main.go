@@ -6,11 +6,12 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/marcosfalves/fullcyclelx/chatservice/configs"
+	"github.com/marcosfalves/fullcyclelx/chatservice/internal/infra/grpc/server"
 	"github.com/marcosfalves/fullcyclelx/chatservice/internal/infra/repository"
 	"github.com/marcosfalves/fullcyclelx/chatservice/internal/infra/web"
 	"github.com/marcosfalves/fullcyclelx/chatservice/internal/infra/web/webserver"
 	"github.com/marcosfalves/fullcyclelx/chatservice/internal/usecase/chatcompletion"
-	//"github.com/marcosfalves/fullcyclelx/chatservice/internal/usecase/chatcompletionstream"
+	"github.com/marcosfalves/fullcyclelx/chatservice/internal/usecase/chatcompletionstream"
 	"github.com/sashabaranov/go-openai"
 )
 
@@ -41,7 +42,7 @@ func main() {
 		InitialSystemMessage: configs.InitialChatMessage,
 	}
 
-/* 	chatConfigStream := chatcompletionstream.ChatCompletionConfigInputDTO{
+	chatConfigStream := chatcompletionstream.ChatCompletionConfigInputDTO{
 		Model:                configs.Model,
 		ModelMaxTokens:       configs.ModelMaxTokens,
 		Temperature:          float32(configs.Temperature),
@@ -50,11 +51,11 @@ func main() {
 		Stop:                 configs.Stop,
 		MaxTokens:            configs.MaxTokens,
 		InitialSystemMessage: configs.InitialChatMessage,
-	} */
+	}
 
 	usecase := chatcompletion.NewChatCompletionUseCase(repo, client)
 
-/* 	streamChannel := make(chan chatcompletionstream.ChatCompletionOutputDTO)
+	streamChannel := make(chan chatcompletionstream.ChatCompletionOutputDTO)
 	usecaseStream := chatcompletionstream.NewChatCompletionUseCase(repo, client, streamChannel)
 
 	fmt.Println("Starting gRPC server on port " + configs.GRPCServerPort)
@@ -65,7 +66,7 @@ func main() {
 		configs.AuthToken,
 		streamChannel,
 	)
-	go grpcServer.Start() */
+	go grpcServer.Start()
 
 	webserver := webserver.NewWebServer(":" + configs.WebServerPort)
 	webserverChatHandler := web.NewWebChatGPTHandler(*usecase, chatConfig, configs.AuthToken)
